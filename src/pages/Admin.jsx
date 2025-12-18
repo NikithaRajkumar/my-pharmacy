@@ -2,10 +2,13 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { medicineAPI, authAPI } from "../services/api";
+import Alert from "../components/Alert";
+import { useAlert } from "../hooks/useAlert";
 
 const Admin = () => {
   const { user, isLoggedIn } = useAuth();
   const navigate = useNavigate();
+  const { alert, showSuccess, showError, hideAlert } = useAlert();
   const [activeTab, setActiveTab] = useState("users");
   const [users, setUsers] = useState([]);
   const [medicines, setMedicines] = useState([]);
@@ -34,6 +37,16 @@ const Admin = () => {
       setUsers(data);
     } catch (error) {
       console.error("Error loading users:", error);
+    }
+  };
+
+  const handleApproveAdmin = async (userId) => {
+    try {
+      await authAPI.approveAdmin(userId, user._id || user.id);
+      showSuccess('Admin approved successfully!');
+      loadUsers();
+    } catch (error) {
+      showError('Error approving admin');
     }
   };
 
@@ -311,7 +324,10 @@ const Admin = () => {
                   <tr>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
                     <th>Registration Date</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -319,7 +335,30 @@ const Admin = () => {
                     <tr key={user._id}>
                       <td>{user.name}</td>
                       <td>{user.email}</td>
+                      <td>{user.role}</td>
+                      <td>
+                        <span style={{
+                          padding: '0.25rem 0.5rem',
+                          borderRadius: '4px',
+                          fontSize: '0.75rem',
+                          fontWeight: '500',
+                          background: user.isApproved ? '#10b981' : '#f59e0b',
+                          color: 'white'
+                        }}>
+                          {user.isApproved ? 'Approved' : 'Pending'}
+                        </span>
+                      </td>
                       <td>{new Date(user.createdAt).toLocaleDateString() || "N/A"}</td>
+                      <td>
+                        {user.role === 'admin' && !user.isApproved && (
+                          <button
+                            className="btn btn-edit"
+                            onClick={() => handleApproveAdmin(user._id)}
+                          >
+                            Approve
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

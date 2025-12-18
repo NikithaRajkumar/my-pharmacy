@@ -17,6 +17,11 @@ export const authAPI = {
   getAllUsers: async () => {
     const response = await axios.get(`${API_BASE_URL}/auth/users`);
     return response.data;
+  },
+  
+  approveAdmin: async (id, approvedBy) => {
+    const response = await axios.put(`${API_BASE_URL}/auth/approve-admin/${id}`, { approvedBy });
+    return response.data;
   }
 };
 

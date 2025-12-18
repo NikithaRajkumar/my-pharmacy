@@ -15,8 +15,13 @@ router.post('/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword, role });
+    const isApproved = role === 'admin' ? false : true;
+    const user = new User({ name, email, password: hashedPassword, role, isApproved });
     await user.save();
+
+    if (role === 'admin') {
+      return res.json({ message: 'Admin registration pending approval', requiresApproval: true });
+    }
 
     res.json({ user: { id: user._id, name, email, role } });
   } catch (error) {
@@ -39,6 +44,10 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
+    if (user.role === 'admin' && !user.isApproved) {
+      return res.status(403).json({ message: 'Admin account pending approval' });
+    }
+
     res.json({ user: { id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -50,6 +59,21 @@ router.get('/users', async (req, res) => {
   try {
     const users = await User.find({}, { password: 0 }).sort({ createdAt: -1 });
     res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Approve admin (admin only)
+router.put('/approve-admin/:id', async (req, res) => {
+  try {
+    const { approvedBy } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { isApproved: true, approvedBy },
+      { new: true }
+    );
+    res.json({ message: 'Admin approved successfully', user });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

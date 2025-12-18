@@ -12,6 +12,7 @@ import Admin from "./pages/Admin";
 import { CartProvider } from "./context/CartContext";
 import { OrdersProvider } from "./context/OrdersContext";
 import { AuthProvider } from "./context/AuthContext";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const globalStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -95,7 +96,7 @@ const AppContent = () => {
 
 function App() {
   return (
-    <>
+    <ErrorBoundary>
       <style>{globalStyles}</style>
       <AuthProvider>
         <CartProvider>
@@ -106,7 +107,7 @@ function App() {
           </OrdersProvider>
         </CartProvider>
       </AuthProvider>
-    </>
+    </ErrorBoundary>
   );
 }
 

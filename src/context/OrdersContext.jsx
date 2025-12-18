@@ -26,19 +26,21 @@ export const OrdersProvider = ({ children }) => {
   const { user, isLoggedIn } = useAuth();
 
   const loadOrders = async () => {
-    if (isLoggedIn() && user) {
-      try {
+    try {
+      if (isLoggedIn() && user) {
         const orders = await orderAPI.getUserOrders(user._id || user.id);
         dispatch({ type: 'SET_ORDERS', payload: orders });
-      } catch (error) {
-        console.error('Error loading orders:', error);
       }
+    } catch (error) {
+      console.error('Error loading orders:', error);
     }
   };
 
   useEffect(() => {
-    loadOrders();
-  }, [user, isLoggedIn]);
+    if (user) {
+      loadOrders();
+    }
+  }, [user]);
 
   const addOrder = async (orderData) => {
     try {

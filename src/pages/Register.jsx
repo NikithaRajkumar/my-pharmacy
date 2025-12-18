@@ -21,7 +21,12 @@ const Register = () => {
     }
 
     try {
-      await register({ name, email, password, role });
+      const response = await register({ name, email, password, role });
+      if (response.requiresApproval) {
+        alert("Admin registration submitted successfully! Your account is awaiting approval from the current admin. You will be able to login once approved.");
+        setTimeout(() => navigate("/login"), 1000);
+        return;
+      }
       navigate("/browse");
     } catch (error) {
       setError(error.response?.data?.message || "Registration failed");

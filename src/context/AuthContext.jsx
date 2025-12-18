@@ -4,7 +4,15 @@ import { authAPI } from '../services/api';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
+  const [user, setUser] = useState(() => {
+    try {
+      const userData = localStorage.getItem('user');
+      return userData ? JSON.parse(userData) : null;
+    } catch {
+      localStorage.removeItem('user');
+      return null;
+    }
+  });
 
   const login = async (credentials) => {
     try {
@@ -20,6 +28,9 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       const data = await authAPI.register(userData);
+      if (data.requiresApproval) {
+        return data;
+      }
       setUser(data.user);
       localStorage.setItem('user', JSON.stringify(data.user));
       return data;
