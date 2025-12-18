@@ -29,22 +29,45 @@ const Home = () => {
   const navigate = useNavigate();
   
   const styles = `
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200px 0; }
+      100% { background-position: calc(200px + 100%) 0; }
+    }
     .home {
       min-height: 100vh;
-      background: linear-gradient(135deg, #000000 0%, #434343 100%);
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
       margin: 0;
       padding: 0;
       position: relative;
+      overflow-x: hidden;
     }
     .home::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.05) 0%, transparent 50%),
-                  radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%);
       z-index: 1;
     }
     .home > * {
@@ -52,65 +75,91 @@ const Home = () => {
       z-index: 2;
     }
     .hero-section {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(20px);
-      padding: 10rem 2rem;
+      padding: 12rem 2rem;
       text-align: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      animation: fadeInUp 1s ease-out;
     }
     .hero-content {
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
     }
     .hero-content h1 {
-      font-size: 5rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #000000, #434343);
+      font-size: 6rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff 0%, #e5e7eb 50%, #ffffff 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       margin-bottom: 2rem;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      letter-spacing: -0.05em;
+      line-height: 1;
+      animation: slideInLeft 1s ease-out 0.3s both;
+      position: relative;
+    }
+    .hero-content h1::after {
+      content: '';
+      position: absolute;
+      bottom: -20px; left: 50%;
+      transform: translateX(-50%);
+      width: 100px; height: 4px;
+      background: linear-gradient(90deg, transparent, #fff, transparent);
+      border-radius: 2px;
     }
     .hero-content .subtitle {
-      font-size: 1.2rem;
-      color: #6b7280;
-      margin-bottom: 3rem;
-      font-weight: 400;
+      font-size: 1.4rem;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 4rem;
+      font-weight: 300;
       line-height: 1.6;
-      max-width: 600px;
+      max-width: 700px;
       margin-left: auto;
       margin-right: auto;
+      animation: slideInRight 1s ease-out 0.6s both;
     }
     .login-btn {
-      background: linear-gradient(135deg, #000000, #434343);
+      background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
       color: white;
-      border: none;
-      padding: 1.25rem 3rem;
-      border-radius: 15px;
-      font-size: 1.125rem;
+      border: 2px solid rgba(255,255,255,0.3);
+      padding: 1.5rem 4rem;
+      border-radius: 50px;
+      font-size: 1.2rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.4s ease;
       margin-bottom: 4rem;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 1s ease-out 0.9s both;
+    }
+    .login-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.6s ease;
     }
     .login-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      border-color: rgba(255,255,255,0.6);
+    }
+    .login-btn:hover::before {
+      left: 100%;
     }
     .login-btn:active {
-      transform: translateY(-1px);
+      transform: translateY(-2px) scale(1.02);
     }
     .stats-section {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.03);
       backdrop-filter: blur(10px);
-      padding: 5rem 2rem;
+      padding: 6rem 2rem;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
@@ -123,39 +172,42 @@ const Home = () => {
       text-align: center;
     }
     .stat-item {
-      padding: 2rem 1rem;
-      background: rgba(255, 255, 255, 0.95);
+      padding: 3rem 2rem;
+      background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(20px);
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
+      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.4s ease;
+      animation: fadeInUp 0.8s ease-out calc(var(--delay, 0) * 0.2s) both;
     }
     .stat-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      transform: translateY(-10px) scale(1.05);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
     .stat-number {
-      font-size: 3rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #000000, #434343);
+      font-size: 3.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff, #e5e7eb);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       display: block;
-      margin-bottom: 0.75rem;
+      margin-bottom: 1rem;
+      animation: pulse 2s ease-in-out infinite;
     }
     .stat-label {
-      color: #64748b;
-      font-size: 0.875rem;
+      color: rgba(255,255,255,0.7);
+      font-size: 1rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
     .features-section {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.02);
       backdrop-filter: blur(10px);
-      padding: 8rem 2rem;
+      padding: 10rem 2rem;
     }
     .features-container {
       max-width: 1200px;
@@ -163,129 +215,144 @@ const Home = () => {
     }
     .section-title {
       text-align: center;
-      font-size: 3rem;
+      font-size: 3.5rem;
       background: linear-gradient(135deg, #ffffff, #e5e7eb);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 1.5rem;
-      font-weight: 800;
+      margin-bottom: 2rem;
+      font-weight: 900;
       letter-spacing: -0.03em;
+      animation: fadeInUp 0.8s ease-out;
     }
     .section-subtitle {
       text-align: center;
-      font-size: 1.2rem;
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 5rem;
+      font-size: 1.3rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 6rem;
       max-width: 700px;
       margin-left: auto;
       margin-right: auto;
       line-height: 1.7;
-      font-weight: 400;
+      font-weight: 300;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
     }
     .features {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 3rem;
+      gap: 4rem;
     }
     .feature {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 25px;
-      padding: 4rem 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 4rem 3rem;
       text-align: center;
-      transition: all 0.4s ease;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.5s ease;
+      animation: fadeInUp 0.8s ease-out calc(var(--delay, 0) * 0.2s) both;
     }
     .feature:hover {
-      transform: translateY(-10px) scale(1.02);
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-      background: rgba(255, 255, 255, 1);
+      transform: translateY(-15px) scale(1.03);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.3);
     }
     .feature-icon {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, #000000, #434343);
-      border-radius: 20px;
-      margin: 0 auto 2.5rem;
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 25px;
+      margin: 0 auto 3rem;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-      transition: all 0.3s ease;
+      transition: all 0.4s ease;
+      backdrop-filter: blur(10px);
+      animation: float 3s ease-in-out infinite;
     }
     .feature:hover .feature-icon {
-      transform: scale(1.1) rotate(5deg);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      transform: scale(1.2) rotate(10deg);
+      background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
+      border-color: rgba(255,255,255,0.5);
     }
     .feature h3 {
-      font-size: 1.75rem;
-      margin-bottom: 1.25rem;
-      background: linear-gradient(135deg, #000000, #434343);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: white;
       font-weight: 700;
       letter-spacing: -0.01em;
     }
     .feature p {
-      color: #6b7280;
-      line-height: 1.6;
-      font-size: 1rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.7;
+      font-size: 1.1rem;
+      font-weight: 300;
     }
     .cta-section {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(20px);
-      padding: 8rem 2rem;
+      padding: 10rem 2rem;
       text-align: center;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      animation: fadeInUp 0.8s ease-out;
     }
     .cta-content {
-      max-width: 600px;
+      max-width: 700px;
       margin: 0 auto;
     }
     .cta-title {
-      font-size: 3rem;
-      margin-bottom: 1.5rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #000000, #434343);
+      font-size: 3.5rem;
+      margin-bottom: 2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff, #e5e7eb);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       letter-spacing: -0.03em;
+      animation: slideInLeft 0.8s ease-out 0.2s both;
     }
     .cta-subtitle {
-      font-size: 1.1rem;
-      color: #6b7280;
-      line-height: 1.6;
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.7;
+      font-weight: 300;
+      animation: slideInRight 0.8s ease-out 0.4s both;
     }
     @media (max-width: 768px) {
       .hero-content h1 {
-        font-size: 2.5rem;
+        font-size: 3rem;
       }
       .section-title, .cta-title {
-        font-size: 2rem;
+        font-size: 2.5rem;
       }
       .features {
         grid-template-columns: 1fr;
+        gap: 3rem;
       }
       .stats-container {
         grid-template-columns: repeat(2, 1fr);
         gap: 2rem;
       }
       .feature {
-        padding: 2rem 1.5rem;
+        padding: 3rem 2rem;
+      }
+      .hero-section {
+        padding: 8rem 2rem;
       }
     }
     @media (max-width: 480px) {
       .hero-content h1 {
-        font-size: 2rem;
+        font-size: 2.5rem;
       }
       .stats-container {
         grid-template-columns: 1fr;
+      }
+      .login-btn {
+        padding: 1.2rem 3rem;
+        font-size: 1rem;
       }
     }
   `;
@@ -297,28 +364,28 @@ const Home = () => {
         <section className="hero-section">
           <div className="hero-content">
             <h1>medPlus</h1>
+            <p className="subtitle">Your trusted digital pharmacy delivering authentic medicines and expert healthcare solutions</p>
             <button className="login-btn" onClick={() => navigate('/login')}>
               Get Started
             </button>
-            <p className="subtitle">Your trusted digital pharmacy delivering authentic medicines and expert healthcare solutions</p>
           </div>
         </section>
         
         <section className="stats-section">
           <div className="stats-container">
-            <div className="stat-item">
+            <div className="stat-item" style={{'--delay': 0}}>
               <span className="stat-number">50K+</span>
               <span className="stat-label">Customers</span>
             </div>
-            <div className="stat-item">
+            <div className="stat-item" style={{'--delay': 1}}>
               <span className="stat-number">10K+</span>
               <span className="stat-label">Medicines</span>
             </div>
-            <div className="stat-item">
+            <div className="stat-item" style={{'--delay': 2}}>
               <span className="stat-number">24/7</span>
               <span className="stat-label">Support</span>
             </div>
-            <div className="stat-item">
+            <div className="stat-item" style={{'--delay': 3}}>
               <span className="stat-number">99%</span>
               <span className="stat-label">Satisfaction</span>
             </div>
@@ -330,21 +397,21 @@ const Home = () => {
             <h2 className="section-title">Why Choose medPlus</h2>
             <p className="section-subtitle">Professional healthcare solutions with verified quality and expert support</p>
             <div className="features">
-              <div className="feature">
+              <div className="feature" style={{'--delay': 0}}>
                 <div className="feature-icon">
                   <ShieldCheckIcon />
                 </div>
                 <h3>Verified Quality</h3>
                 <p>All medicines sourced from licensed manufacturers with rigorous quality checks for authenticity and safety.</p>
               </div>
-              <div className="feature">
+              <div className="feature" style={{'--delay': 1}}>
                 <div className="feature-icon">
                   <TruckIcon />
                 </div>
                 <h3>Fast Delivery</h3>
                 <p>Express delivery within 24 hours with real-time tracking and temperature-controlled packaging.</p>
               </div>
-              <div className="feature">
+              <div className="feature" style={{'--delay': 2}}>
                 <div className="feature-icon">
                   <UserCheckIcon />
                 </div>
